@@ -6,7 +6,7 @@ import java.nio.file.Paths;
 import java.util.*;
 
 /**
- * Created by aarikan on 30/11/15.
+ * Created by erdemtoraman :) on 30/11/15.
  */
 public class Main {
     static ArrayList<HashMap<String, Integer>> legitimateMails = new ArrayList<>();
