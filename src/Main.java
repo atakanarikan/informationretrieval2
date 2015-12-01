@@ -299,6 +299,38 @@ public class Main {
             }
         });
     }
+
+    public static void calculatetotaltfidfspam() {
+        HashMap<String, Double> tfidfSpamTotal = new HashMap<>();
+        for (HashMap<String, Double> map : tfidfSpam) {
+            Iterator itr = map.keySet().iterator();
+            while (itr.hasNext()) {
+                String key = (String) itr.next();
+                if (tfidfSpamTotal.keySet().contains(key)) {
+                    double x = tfidfSpamTotal.get(key);
+                    tfidfSpamTotal.put(key, x + map.get(key));
+                } else {
+                    tfidfSpamTotal.put(key, map.get(key));
+                }
+            }
+        }
+        ArrayList <String> top = new ArrayList<>(20);
+        for(int i = 0; i<20; i++){
+            double max = 0;
+            String maxKey = "";
+            Iterator it = tfidfSpamTotal.keySet().iterator();
+            while (it.hasNext()) {
+                String key = (String) it.next();
+                if(tfidfSpamTotal.get(key) > max) {
+                    max = tfidfSpamTotal.get(key);
+                    maxKey = key;
+                }
+            }
+            top.add(i, maxKey);
+            System.out.println(maxKey + " -> " + max);
+            tfidfSpamTotal.remove(maxKey);
+        }
+    }
     /*
     just runs the process. Calls all the methods and has a infinite loop.
      */
