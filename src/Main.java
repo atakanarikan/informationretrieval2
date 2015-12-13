@@ -19,7 +19,8 @@ public class Main {
     static HashMap<String, Double> tfidfQuery = new HashMap<>();
     static HashMap<String, Double> spamCentroid = new HashMap<>();
     static HashMap<String, Double> legitCentroid = new HashMap<>();
-
+    static int spam = 0;
+    static int legit = 0;
 
     public static void main(String[] args) throws IOException {
         run();
@@ -230,7 +231,7 @@ public class Main {
     replies with a resulting string.
      */
     public static void kNN(int k) {
-        System.out.println("Running the kNN algorithm for k = " + k + "...");
+   //     System.out.println("Running the kNN algorithm for k = " + k + "...");
         ArrayList <Double> spamResults = cosineSimilaritiesSpam();
         ArrayList <Double> legitResults = cosineSimilaritiesLegitimate();
         Collections.sort(spamResults);
@@ -249,8 +250,10 @@ public class Main {
             }
         }
         if(legitCount > spamCount) {
+            legit++;
             System.out.println("It's labeled as LEGITIMATE with " + legitCount + " legitimate, " + spamCount + " spam score.");
         } else {
+            spam++;
             System.out.println("It's labeled as SPAM with " + legitCount + " legitimate, " + spamCount + " spam score.");
         }
     }
@@ -277,9 +280,11 @@ public class Main {
         double spamResult = cosineSimilarity(tfidfQuery, spamCentroid);
         double legitResult = cosineSimilarity(tfidfQuery, legitCentroid);
         if(legitResult > spamResult) {
+            legit++;
             System.out.println("It's labeled as LEGITIMATE with score of " + legitResult + "  (" + spamResult + " spam score)");
         }
         else {
+            spam++;
             System.out.println("It's labeled as SPAM with score of " + spamResult + "  (" + legitResult + " legitimate score)");
         }
     }
@@ -289,15 +294,18 @@ public class Main {
             if (Files.isRegularFile(filePath) && filePath.toString().endsWith("txt")) {
                 try {
                     processQuery(filePath.toString());
-                    kNN(199);
-                    Rocchio();
-                    System.out.println("*****************************************************");
+ //                   kNN(9);
+                   Rocchio();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-
             }
         });
+        System.out.println("Results for type: " + type);
+        System.out.println("spam count: " + spam);
+        System.out.println("legit count: " + legit);
+        spam = 0;
+        legit = 0;
     }
 
     public static void calculatetotaltfidfspam() {
@@ -357,9 +365,9 @@ public class Main {
         System.out.print("Calculating the centroid of legitimate mails... ");
         calculateCentroid(tfidfSpam, spamCentroid);
         System.out.println("Done!");
-        //test("spam");
-        Scanner scan = new Scanner(System.in);
+         //   test("spam");
         String userQuery;
+        Scanner scan = new Scanner(System.in);
         int k;
         while(true){
             System.out.print("Please enter the k value(Default is 1): ");
