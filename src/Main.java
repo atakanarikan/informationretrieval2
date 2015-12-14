@@ -337,10 +337,10 @@ public class Main {
     public static void run() throws IOException {
         System.out.println("Hello, world!");
         System.out.print("Reading the legitimate data... ");
-        readInput("dataset/training/legitimate", legitimateMails);
+        readInput("/dataset/training/legitimate", legitimateMails);
         System.out.println("Done!");
         System.out.print("Reading the spam data... ");
-        readInput("dataset/training/spam", spamMails);
+        readInput("/dataset/training/spam", spamMails);
         System.out.println("Done!");
         System.out.print("Calculating the idf values for whole vocabulary... ");
         doIDF();
