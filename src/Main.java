@@ -6,7 +6,7 @@ import java.nio.file.Paths;
 import java.util.*;
 
 /**
- * Created by erdemtoraman :) on 30/11/15.
+ * Created by Atakan Arıkan on 30/11/15.
  */
 public class Main {
     static ArrayList<HashMap<String, Integer>> legitimateMails = new ArrayList<>();
@@ -23,7 +23,7 @@ public class Main {
     static int legit = 0;
 
     public static void main(String[] args) throws IOException {
-        run();
+        run(args[0], args[1], args[2]);
     }
 
     /*
@@ -251,10 +251,10 @@ public class Main {
         }
         if(legitCount > spamCount) {
             legit++;
-            System.out.println("It's labeled as LEGITIMATE with " + legitCount + " legitimate, " + spamCount + " spam score.");
+            System.out.println("legitimate");
         } else {
             spam++;
-            System.out.println("It's labeled as SPAM with " + legitCount + " legitimate, " + spamCount + " spam score.");
+            System.out.println("spam");
         }
     }
 
@@ -281,32 +281,29 @@ public class Main {
         double legitResult = cosineSimilarity(tfidfQuery, legitCentroid);
         if(legitResult > spamResult) {
             legit++;
-            System.out.println("It's labeled as LEGITIMATE with score of " + legitResult + "  (" + spamResult + " spam score)");
+            System.out.println("legitimate");
         }
         else {
             spam++;
-            System.out.println("It's labeled as SPAM with score of " + spamResult + "  (" + legitResult + " legitimate score)");
+            System.out.println("spam");
         }
     }
 
-    public static void test(String type) throws IOException {
-        Files.walk(Paths.get("dataset/test/" + type)).forEach(filePath -> {
+    public static void test(String filepath, String method) throws IOException {
+        Files.walk(Paths.get(filepath)).forEach(filePath -> {
             if (Files.isRegularFile(filePath) && filePath.toString().endsWith("txt")) {
                 try {
                     processQuery(filePath.toString());
- //                   kNN(9);
-                   Rocchio();
+                    System.out.print(filePath.toString().substring(filePath.toString().lastIndexOf("\\") +1) + ": ");
+                    if(method.equals("knn")) kNN(155);
+                    if(method.equals("rocchio")) Rocchio();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
         });
-        System.out.println("Results for type: " + type);
-        System.out.println("spam count: " + spam);
-        System.out.println("legit count: " + legit);
-        spam = 0;
-        legit = 0;
     }
+
 
     public static void calculatetotaltfidfspam() {
         HashMap<String, Double> tfidfSpamTotal = new HashMap<>();
@@ -342,13 +339,13 @@ public class Main {
     /*
     just runs the process. Calls all the methods and has a infinite loop.
      */
-    public static void run() throws IOException {
+    public static void run(String legitTraining, String spamTraining, String testDataset) throws IOException {
         System.out.println("Hello, world!");
         System.out.print("Reading the legitimate data... ");
-        readInput("/dataset/training/legitimate", legitimateMails);
+        readInput(legitTraining, legitimateMails);
         System.out.println("Done!");
         System.out.print("Reading the spam data... ");
-        readInput("/dataset/training/spam", spamMails);
+        readInput(spamTraining, spamMails);
         System.out.println("Done!");
         System.out.print("Calculating the idf values for whole vocabulary... ");
         doIDF();
@@ -365,29 +362,6 @@ public class Main {
         System.out.print("Calculating the centroid of legitimate mails... ");
         calculateCentroid(tfidfSpam, spamCentroid);
         System.out.println("Done!");
-         //   test("spam");
-        String userQuery;
-        Scanner scan = new Scanner(System.in);
-        int k;
-        while(true){
-            System.out.print("Please enter the k value(Default is 1): ");
-            userQuery = scan.nextLine();
-            if (userQuery.equals("q")) {
-                scan.close();
-                System.out.println("Goodbye, Cruel World!");
-                System.exit(0);
-            }
-            if(userQuery.equals("")) {
-                k = 1;
-            } else {
-                k = Integer.parseInt(userQuery);
-            }
-            System.out.print("Please enter your query: ");
-            userQuery = scan.nextLine();
-            processQuery(userQuery);
-            kNN(k);
-            Rocchio();
-            System.out.println("*****************************************************");
-        }
+        test(testDataset, "rocchio");
     }
 }
